@@ -14,6 +14,9 @@ import { useGlobalState } from "~~/services/store/store";
 import { wagmiClient } from "~~/services/web3/wagmiClient";
 import { appChains } from "~~/services/web3/wagmiConnectors";
 import "~~/styles/globals.css";
+import { setup } from "../components/mud/mud/setup";
+import { MUDProvider } from "../components/mud/MUDContext";
+import { useMUD } from "../components/mud/MUDContext";
 
 const ScaffoldEthApp = ({ Component, pageProps }: AppProps) => {
   const price = useNativeCurrencyPrice();
@@ -21,6 +24,7 @@ const ScaffoldEthApp = ({ Component, pageProps }: AppProps) => {
   // This variable is required for initial client side rendering of correct theme for RainbowKit
   const [isDarkTheme, setIsDarkTheme] = useState(true);
   const { isDarkMode } = useDarkMode();
+  const [res, setRes] = useState<any>(null);
 
   useEffect(() => {
     if (price > 0) {
@@ -31,24 +35,31 @@ const ScaffoldEthApp = ({ Component, pageProps }: AppProps) => {
   useEffect(() => {
     setIsDarkTheme(isDarkMode);
   }, [isDarkMode]);
+  useEffect(() => {
+    setup().then(result => {
+      setRes(result);
+    });
+  }, []);
 
   return (
     <WagmiConfig client={wagmiClient}>
-      <NextNProgress />
-      <RainbowKitProvider
-        chains={appChains.chains}
-        avatar={BlockieAvatar}
-        theme={isDarkTheme ? darkTheme() : lightTheme()}
-      >
-        <div className="flex flex-col min-h-screen">
-          <Header />
-          <main className="relative flex flex-col flex-1">
-            <Component {...pageProps} />
-          </main>
-          <Footer />
-        </div>
-        <Toaster />
-      </RainbowKitProvider>
+      <MUDProvider value={res}>
+        <NextNProgress />
+        <RainbowKitProvider
+          chains={appChains.chains}
+          avatar={BlockieAvatar}
+          theme={isDarkTheme ? darkTheme() : lightTheme()}
+        >
+          <div className="flex flex-col min-h-screen">
+            <Header />
+            <main className="relative flex flex-col flex-1">
+              <Component {...pageProps} />
+            </main>
+            <Footer />
+          </div>
+          <Toaster />
+        </RainbowKitProvider>
+      </MUDProvider>
     </WagmiConfig>
   );
 };

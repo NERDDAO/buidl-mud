@@ -162,6 +162,9 @@ importers:
       '@ethersproject/networks':
         specifier: ^5.7.1
         version: 5.7.1
+      '@ethersproject/providers':
+        specifier: ^5.7.1
+        version: 5.7.2
       '@ethersproject/web':
         specifier: ^5.7.1
         version: 5.7.1

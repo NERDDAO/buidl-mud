@@ -2,8 +2,16 @@ import Head from "next/head";
 import Link from "next/link";
 import type { NextPage } from "next";
 import { BugAntIcon, SparklesIcon } from "@heroicons/react/24/outline";
-
+import { useMUD } from "../components/mud/MUDContext";
+import { useComponentValue } from "@latticexyz/react";
 const Home: NextPage = () => {
+  const {
+    components: { Counter },
+    systemCalls: { increment },
+    network: { singletonEntity },
+  } = useMUD();
+
+  const counter = useComponentValue(Counter, singletonEntity);
   return (
     <>
       <Head>
@@ -17,10 +25,18 @@ const Home: NextPage = () => {
             <span className="block text-2xl mb-2">Welcome to</span>
             <span className="block text-4xl font-bold">Scaffold-ETH 2</span>
           </h1>
-          <p className="text-center text-lg">
-            Get started by editing{" "}
-            <code className="italic bg-base-300 text-base font-bold">packages/nextjs/pages/index.tsx</code>
-          </p>
+          <div>
+            Counter: <span>{counter?.value ?? "??"}</span>
+          </div>
+          <button
+            type="button"
+            onClick={async event => {
+              event.preventDefault();
+              console.log("new counter value:", await increment());
+            }}
+          >
+            Increment
+          </button>
           <p className="text-center text-lg">
             Edit your smart contract <code className="italic bg-base-300 text-base font-bold">YourContract.sol</code> in{" "}
             <code className="italic bg-base-300 text-base font-bold">packages/hardhat/contracts</code>
